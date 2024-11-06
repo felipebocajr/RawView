@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala de Cinema Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #181818;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #282828;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
+
+        .video-section, .chat-section {
+            width: 100%;
+        }
+
+        .video-input {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .video-input input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #404040;
+            color: #fff;
+        }
+
+        .video-input button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffcc00;
+            color: #000;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .video-input button:hover {
+            background-color: #ffdd33;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 400px;
+            background-color: #000;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .chat-section {
+            margin-top: 20px;
+            height: 250px;
+            background-color: #333;
+            border-radius: 5px;
+            padding: 15px;
+            color: #bbb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-section h2 {
+            margin-bottom: 10px;
+        }
+
+        .chat-section p {
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sala de Cinema Online</h1>
+        
+        <div class="video-section">
+            <div class="video-input">
+                <input type="text" id="video-url" placeholder="Cole o link do vídeo do YouTube aqui...">
+                <button onclick="loadVideo()">Assistir</button>
+            </div>
+            <div class="video-player" id="video-player">
+                <p style="color: #888; text-align: center; padding: 20px;">O vídeo será exibido aqui.</p>
+            </div>
+        </div>
+        
+        <div class="chat-section">
+            <h2>Chat ao Vivo</h2>
+            <p>O chat ao vivo será implementado aqui.</p>
+        </div>
+    </div>
+
+    <script>
+        function loadVideo() {
+            const url = document.getElementById('video-url').value;
+            const videoId = url.split("v=")[1]?.split("&")[0];
+
+            if (videoId) {
+                const player = document.getElementById('video-player');
+                player.innerHTML = `
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" 
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `;
+            } else {
+                alert("Por favor, insira um link válido do YouTube.");
+            }
+        }
+    </script>
+</body>
+</html>

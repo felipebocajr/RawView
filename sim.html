@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala de Cinema Online com Chat ao Vivo</title>
+    <style>
+        /* Estilos do layout da sala de cinema */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #181818; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        .container { display: flex; width: 90%; max-width: 1200px; background-color: #282828; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); overflow: hidden; }
+        .video-section { flex: 3; padding: 20px; display: flex; flex-direction: column; }
+        .chat-section { flex: 1; background-color: #333; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #ffcc00; margin-bottom: 20px; text-align: center; }
+        .video-input { display: flex; margin-bottom: 15px; gap: 10px; }
+        .video-input input[type="text"] { flex: 1; padding: 10px; border: none; border-radius: 5px; background-color: #404040; color: #fff; }
+        .video-input button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #ffcc00; color: #000; cursor: pointer; transition: background 0.3s; }
+        .video-input button:hover { background-color: #ffdd33; }
+        .video-player { width: 100%; height: 400px; background-color: #000; border-radius: 5px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .chat-section h2 { margin-bottom: 10px; }
+        .chat-box { width: 100%; height: 200px; background-color: #222; overflow-y: auto; border-radius: 5px; padding: 10px; color: #bbb; }
+        .message { margin-bottom: 5px; font-size: 0.9em; }
+        .chat-input { display: flex; gap: 5px; margin-top: 10px; width: 100%; }
+        .chat-input input[type="text"] { flex: 1; padding: 10px; border: none; border-radius: 5px; background-color: #404040; color: #fff; }
+        .chat-input button { padding: 10px; border: none; border-radius: 5px; background-color: #ffcc00; color: #000; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Sala de Cinema Online com Chat ao Vivo</h1>
+
+    <div class="container">
+        <!-- Seção de vídeo -->
+        <div class="video-section">
+            <div class="video-input">
+                <input type="text" id="video-url" placeholder="Cole o link do vídeo do YouTube aqui...">
+                <button onclick="loadVideo()">Assistir</button>
+            </div>
+            <div class="video-player" id="video-player">
+                <p style="color: #888; text-align: center; padding: 20px;">O vídeo será exibido aqui.</p>
+            </div>
+        </div>
+        
+        <!-- Seção de chat -->
+        <div class="chat-section">
+            <h2>Chat ao Vivo</h2>
+            <div class="chat-box" id="chat-box"></div>
+            <div class="chat-input">
+                <input type="text" id="chat-message" placeholder="Digite sua mensagem...">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    
+    <script>
+        // Configuração do Firebase
+
+        import { initializeApp } from "firebase/app";
+        import { getAnalytics } from "firebase/analytics";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQmUyx_a-ihmgKlHpofTRHDC2nwGLkbiI",
+            authDomain: "cinema-online-1ee04.firebaseapp.com",
+            projectId: "cinema-online-1ee04",
+            storageBucket: "cinema-online-1ee04.firebasestorage.app",
+            messagingSenderId: "312833448801",
+            appId: "1:312833448801:web:531d84bb272fe9a6ad0320",
+            measurementId: "G-LB5KG2Y2KD"
+        };
+        
+        // Inicialização do Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Carregar vídeo
+        function loadVideo() {
+            const url = document.getElementById('video-url').value;
+            const videoId = url.split("v=")[1]?.split("&")[0];
+
+            if (videoId) {
+                const player = document.getElementById('video-player');
+                player.innerHTML = `
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" 
+                    title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `;
+            } else {
+                alert("Por favor, insira um link válido do YouTube.");
+            }
+        }
+
+        // Enviar mensagem para o chat
+        function sendMessage() {
+            const message = document.getElementById('chat-message').value;
+            if (message) {
+                database.ref("chat").push().set({
+                    message: message,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                document.getElementById('chat-message').value = '';
+            }
+        }
+
+        // Carregar mensagens do chat em tempo real
+        database.ref("chat").on("child_added", function(snapshot) {
+            const chatBox = document.getElementById('chat-box');
+            const msgData = snapshot.val();
+            const msgElement = document.createElement("div");
+            msgElement.classList.add("message");
+            msgElement.textContent = `[${msgData.timestamp}] ${msgData.message}`;
+            chatBox.appendChild(msgElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sincronizador de Vídeo ao Vivo</title>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+
+<body>
+  <h1>Assista ao Vídeo Sincronizado</h1>
+
+  <!-- Campo para o link do YouTube -->
+  <input type="text" id="videoLink" placeholder="Insira o link do vídeo do YouTube">
+  <button id="loadVideoBtn">Carregar Vídeo</button>
+
+  <div id="player"></div>
+  <button id="playPauseBtn">Play/Pause</button>
+
+  <script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQmUyx_a-ihmgKlHpofTRHDC2nwGLkbiI",
+      authDomain: "cinema-online-1ee04.firebaseapp.com",
+      databaseURL: "https://cinema-online-1ee04-default-rtdb.firebaseio.com",
+      projectId: "cinema-online-1ee04",
+      storageBucket: "cinema-online-1ee04.firebasestorage.app",
+      messagingSenderId: "312833448801",
+      appId: "1:312833448801:web:531d84bb272fe9a6ad0320",
+      measurementId: "G-LB5KG2Y2KD"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let player;
+    let isHost = false;
+    let playerReady = false; // Variável para verificar se o player está pronto
+
+    // Carrega a API do YouTube
+    function onYouTubeIframeAPIReady() {
+      console.log("YouTube API carregada.");
+      player = new YT.Player('player', {
+        height: '390',
+        width: '640',
+        videoId: '',  // Inicialmente sem vídeo
+        events: {
+          'onStateChange': onPlayerStateChange,
+          'onReady': onPlayerReady
+        }
+      });
+    }
+
+    // Sincroniza o estado do vídeo
+    function syncState(state, time, videoId = '') {
+      console.log("Sincronizando estado:", { state, time, videoId });
+      db.ref("video").set({
+        state: state,
+        time: time,
+        videoId: videoId
+      });
+    }
+
+    // Atualiza o vídeo quando o player estiver pronto
+    function onPlayerReady(event) {
+      console.log("Player está pronto.");
+      playerReady = true; // Marca o player como pronto
+      db.ref("video").on("value", (snapshot) => {
+        const data = snapshot.val();
+        console.log("Dados do Firebase:", data);
+        if (data) {
+          if (data.videoId && player.getVideoData().video_id !== data.videoId) {
+            console.log("Carregando novo vídeo:", data.videoId);
+            player.loadVideoById(data.videoId, data.time);  // Carrega o novo vídeo
+          }
+          if (data.state === YT.PlayerState.PLAYING) {
+            console.log("Sincronizando para play no tempo:", data.time);
+            player.seekTo(data.time);
+            player.playVideo();
+          } else if (data.state === YT.PlayerState.PAUSED) {
+            console.log("Sincronizando para pause no tempo:", data.time);
+            player.pauseVideo();
+            player.seekTo(data.time);
+          }
+        }
+      });
+    }
+
+    // Controle de estado do player
+    function onPlayerStateChange(event) {
+      console.log("Mudança de estado do player:", event.data);
+      if (isHost) {
+        if (event.data === YT.PlayerState.PLAYING) {
+          syncState(YT.PlayerState.PLAYING, player.getCurrentTime(), player.getVideoData().video_id);
+        } else if (event.data === YT.PlayerState.PAUSED) {
+          syncState(YT.PlayerState.PAUSED, player.getCurrentTime(), player.getVideoData().video_id);
+        }
+      }
+    }
+
+    // Função para extrair o ID do vídeo a partir do link
+    function getYouTubeVideoId(url) {
+      const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:v\/|embed\/|watch\?v=)|youtu\.be\/)([^&]+)/);
+      console.log("Extraindo ID do vídeo do link:", url);
+      return match ? match[1] : null;
+    }
+
+    // Carrega o vídeo selecionado pelo usuário
+    document.getElementById("loadVideoBtn").addEventListener("click", () => {
+      const videoLink = document.getElementById("videoLink").value;
+      const videoId = getYouTubeVideoId(videoLink);
+      if (videoId) {
+        console.log("ID do vídeo encontrado:", videoId);
+        isHost = true;
+        if (playerReady) {  // Verifica se o player está pronto antes de carregar o vídeo
+          syncState(YT.PlayerState.PAUSED, 0, videoId);  // Reseta o estado do vídeo no banco de dados
+          player.loadVideoById(videoId, 0);
+        } else {
+          console.log("Player não está pronto. Aguardando...");
+          alert("O player ainda não está pronto. Por favor, aguarde alguns segundos e tente novamente.");
+        }
+      } else {
+        console.log("Link inválido do YouTube.");
+        alert("Por favor, insira um link válido do YouTube.");
+      }
+    });
+
+    // Botão Play/Pause
+    document.getElementById("playPauseBtn").addEventListener("click", () => {
+      isHost = true;
+      if (playerReady) { // Verifica se o player está pronto antes de controlar o estado
+        const state = player.getPlayerState();
+        console.log("Botão Play/Pause pressionado. Estado atual:", state);
+        if (state === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      } else {
+        console.log("Player ainda não está pronto para Play/Pause.");
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala de Cinema Online com Chat ao Vivo</title>
+    <style>
+        /* Estilos do layout da sala de cinema */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #181818; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        .container { display: flex; width: 90%; max-width: 1200px; background-color: #282828; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); overflow: hidden; }
+        .video-section { flex: 3; padding: 20px; display: flex; flex-direction: column; }
+        .chat-section { flex: 1; background-color: #333; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #ffcc00; margin-bottom: 20px; text-align: center; }
+        .video-input { display: flex; margin-bottom: 15px; gap: 10px; }
+        .video-input input[type="text"] { flex: 1; padding: 10px; border: none; border-radius: 5px; background-color: #404040; color: #fff; }
+        .video-input button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #ffcc00; color: #000; cursor: pointer; transition: background 0.3s; }
+        .video-input button:hover { background-color: #ffdd33; }
+        .video-player { width: 100%; height: 400px; background-color: #000; border-radius: 5px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .chat-section h2 { margin-bottom: 10px; }
+        .chat-box { width: 100%; height: 200px; background-color: #222; overflow-y: auto; border-radius: 5px; padding: 10px; color: #bbb; }
+        .message { margin-bottom: 5px; font-size: 0.9em; }
+        .chat-input { display: flex; gap: 5px; margin-top: 10px; width: 100%; }
+        .chat-input input[type="text"] { flex: 1; padding: 10px; border: none; border-radius: 5px; background-color: #404040; color: #fff; }
+        .chat-input button { padding: 10px; border: none; border-radius: 5px; background-color: #ffcc00; color: #000; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Sala de Cinema Online com Chat ao Vivo</h1>
+
+    <div class="container">
+        <!-- Seção de vídeo -->
+        <div class="video-section">
+            <div class="video-input">
+                <input type="text" id="video-url" placeholder="Cole o link do vídeo do YouTube aqui...">
+                <button onclick="loadVideo()">Assistir</button>
+            </div>
+            <div class="video-player" id="video-player">
+                <p style="color: #888; text-align: center; padding: 20px;">O vídeo será exibido aqui.</p>
+            </div>
+            <button id="play-button" onclick="togglePlay()">Play/Pause</button>
+        </div>
+        
+        <!-- Seção de chat -->
+        <div class="chat-section">
+            <h2>Chat ao Vivo</h2>
+            <div class="chat-box" id="chat-box"></div>
+            <div class="chat-input">
+                <input type="text" id="chat-message" placeholder="Digite sua mensagem...">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const videoDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/video.json";
+        const chatDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/chat.json";
+        const playbackStateUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/playbackState.json";
+        let currentVideoId = null;
+        let isPlaying = false;
+        let videoIframe = null;
+
+        // Carregar vídeo
+        function loadVideo() {
+            const url = document.getElementById('video-url').value;
+            const videoId = url.split("v=")[1]?.split("&")[0];
+
+            if (videoId) {
+                currentVideoId = videoId;
+                updateVideoPlayer();
+                saveVideoToFirebase(videoId);
+            } else {
+                alert("Por favor, insira um link válido do YouTube.");
+            }
+        }
+
+        function updateVideoPlayer() {
+            const player = document.getElementById('video-player');
+            player.innerHTML = `
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${currentVideoId}?enablejsapi=1" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            `;
+            videoIframe = player.querySelector('iframe');
+            // Carregar o estado de reprodução
+            loadPlaybackState();
+        }
+
+        function saveVideoToFirebase(videoId) {
+            fetch(videoDatabaseUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ videoId: videoId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao salvar o vídeo');
+                }
+                console.log('Vídeo salvo com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        }
+
+        // Play/Pause
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const action = isPlaying ? 'play' : 'pause';
+            fetch(playbackStateUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ isPlaying: isPlaying })
+            });
+            syncPlayback(action);
+        }
+
+        function syncPlayback(action) {
+            if (action === 'play') {
+                videoIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            } else {
+                videoIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            }
+        }
+
+        // Carregar o estado de reprodução
+        function loadPlaybackState() {
+            fetch(playbackStateUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const latestState = Object.values(data).pop();
+                    if (latestState && latestState.isPlaying) {
+                        syncPlayback('play');
+                        isPlaying = true;
+                    } else {
+                        syncPlayback('pause');
+                        isPlaying = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar estado de reprodução:', error);
+                });
+        }
+
+        // Enviar mensagem para o chat
+        function sendMessage() {
+            const message = document.getElementById('chat-message').value;
+            if (message) {
+                const messageData = {
+                    message: message,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+
+                // Enviar a mensagem para o Firebase usando a API REST
+                fetch(chatDatabaseUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(messageData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao enviar a mensagem');
+                    }
+                    console.log('Mensagem enviada com sucesso!');
+                    document.getElementById('chat-message').value = '';
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+            } else {
+                alert("Digite uma mensagem antes de enviar.");
+            }
+        }
+
+        // Carregar mensagens do chat em tempo real
+        function loadMessages() {
+            fetch(chatDatabaseUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const chatBox = document.getElementById('chat-box');
+                    chatBox.innerHTML = ''; // Limpa o chat existente
+                    for (const key in data) {
+                        const msgData = data[key];
+                        const msgElement = document.createElement("div");
+                        msgElement.classList.add("message");
+                        msgElement.textContent = `[${msgData.timestamp}] ${msgData.message}`;
+                        chatBox.appendChild(msgElement);
+                    }
+                    chatBox.scrollTop = chatBox.scrollHeight; // Rolagem para a última mensagem
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar mensagens:', error);
+                });
+        }
+
+        // Carregar vídeos armazenados
+        function loadStoredVideo() {
+            fetch(videoDatabaseUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const videoKeys = Object.keys(data);
+                    if (videoKeys.length > 0) {
+                        const latestVideo = data[videoKeys[videoKeys.length - 1]];
+                        currentVideoId = latestVideo.videoId;
+                        updateVideoPlayer();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar vídeos:', error);
+                });
+        }
+
+        // Carregar mensagens a cada 2 segundos
+        setInterval(loadMessages, 2000);
+        window.onload = loadStoredVideo;
+
+    </script>
+</body>
+</html>
