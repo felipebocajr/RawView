@@ -360,7 +360,7 @@ h1 {
 }
 
 .chat-section h2 { 
-    margin-bottom: 10px; 
+    margin-bottom: 9px; 
 }
 
 .chat-box { 
@@ -373,10 +373,6 @@ h1 {
     color: #bbb; 
 }
 
-.message { 
-    margin-bottom: 5px; 
-    font-size: 0.9em;
-}
 
 .chat-input { 
     display: flex; 
@@ -394,12 +390,12 @@ h1 {
     color: #fff; 
 }
 
-.chat-section button {
+#menssage {
     background-color: #ffcc00;
     padding: 10px 20px;
     width: 80px;
     border: none; 
-    border-radius: 5px; 
+    border-radius: 10px; 
     background-color: #ffcc00;
     text-align: center;
     color: #000; 
@@ -407,6 +403,6 @@ h1 {
     transition: background 0.3s;
 }
 
-.chat-section button:hover { 
+#menssage:hover { 
     background-color: darkgoldenrod; 
 }
