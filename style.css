@@ -73,7 +73,8 @@ header {
   font-size: 1rem;
   background-color: #333; /* Alterar para a cor desejada */
   color: #ffffff;
-.botao-chat {
+  }
+  .botao-chat {
     background-color: #1a1a1a;
     color: #ffffff;
     border: 0.0925rem solid #2a2a2a; /* 1px */
@@ -187,7 +188,8 @@ header {
 .profile-icon i {
   color: white;
   font-size: 1.25rem;
-#play-button {
+  }
+  #play-button {
     
     background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
     color: #ffffff;
@@ -268,4 +270,3 @@ header {
                     0 0 0 0 rgba(255, 255, 255, 0);
     }
 }
-
