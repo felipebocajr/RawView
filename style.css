@@ -17,3 +17,92 @@ h1 { color: #ffcc00; margin-bottom: 20px; text-align: center; }
 .message { margin-bottom: 5px; font-size: 0.9em; }
 .chat-input { display: flex; gap: 5px; margin-top: 10px; width: 100%; }
 .chat-input input[type="text"] { flex: 1; padding: 10px; border: none; border-radius: 5px; background-color: #404040; color: #fff; }
+
+
+/* Estilo do header e navbar */
+header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Para garantir que fique acima dos outros elementos */
+  box-shadow: 0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Espaçamento entre logo, pesquisa e perfil */
+  padding: 0.625rem 1.25rem;
+  background-color: #333; /* Ajuste de cor conforme sua preferência */
+  color: white;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: 4.5rem; /* Tamanho do logo */
+  margin-right: 0.5rem;
+}
+
+.logo span {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin-left:1.5rem;
+}
+
+/* Barra de pesquisa */
+/* Barra de pesquisa */
+.search-bar {
+  flex-grow: 1;
+  max-width: 60%; /* Define uma largura máxima */
+  margin: 0 auto; /* Centraliza a barra de pesquisa */
+  padding: 0.5rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.3125rem;
+  font-size: 1rem;
+  background-color: #333; /* Alterar para a cor desejada */
+  color: #ffffff;
+}
+
+
+
+
+/* Botão de convite */
+.invite-button {
+  padding: 0.5rem 1rem;
+  background-color: #4267b2;
+  color: white;
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 12rem;
+}
+
+.invite-button:hover {
+  background-color: #365899;
+}
+
+/* Ícone de perfil */
+.profile-icon {
+  margin-left: 0.5rem; /* Reduzido para aproximar o ícone do botão */
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #666;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-icon i {
+  color: white;
+  font-size: 1.25rem;
+}
+
