@@ -222,7 +222,6 @@ header {
         rgba(255, 255, 255, 0.1),
         transparent
     );
-    animation: shine 2s infinite;
 }
 
 #play-button:hover {
