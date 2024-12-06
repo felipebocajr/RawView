@@ -72,6 +72,8 @@ header {
   font-size: 1rem;
   background-color: #333; /* Alterar para a cor desejada */
   color: #ffffff;
+}
+
 .botao-chat {
     background-color: #1a1a1a;
     color: #ffffff;
@@ -186,6 +188,8 @@ header {
 .profile-icon i {
   color: white;
   font-size: 1.25rem;
+}
+
 #play-button {
     
     background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
