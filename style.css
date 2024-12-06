@@ -73,7 +73,6 @@ header {
   background-color: #333; /* Alterar para a cor desejada */
   color: #ffffff;
 }
-
 .botao-chat {
     background-color: #1a1a1a;
     color: #ffffff;
@@ -154,9 +153,6 @@ header {
     box-shadow: none;
 }
 
-
-
-
 /* Botão de convite */
 .invite-button {
   padding: 0.5rem 1rem;
@@ -189,7 +185,6 @@ header {
   color: white;
   font-size: 1.25rem;
 }
-
 #play-button {
     
     background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
@@ -271,6 +266,7 @@ header {
                     0 0 0 0 rgba(255, 255, 255, 0);
     }
 }
+
 
 * {
     margin: 0; 
@@ -361,7 +357,7 @@ h1 {
 }
 
 .chat-section h2 { 
-    margin-bottom: 10px; 
+    margin-bottom: 9px; 
 }
 
 .chat-box { 
@@ -374,10 +370,6 @@ h1 {
     color: #bbb; 
 }
 
-.message { 
-    margin-bottom: 5px; 
-    font-size: 0.9em;
-}
 
 .chat-input { 
     display: flex; 
@@ -395,12 +387,12 @@ h1 {
     color: #fff; 
 }
 
-.chat-section button {
+#menssage {
     background-color: #ffcc00;
     padding: 10px 20px;
     width: 80px;
     border: none; 
-    border-radius: 5px; 
+    border-radius: 10px; 
     background-color: #ffcc00;
     text-align: center;
     color: #000; 
@@ -408,6 +400,6 @@ h1 {
     transition: background 0.3s;
 }
 
-.chat-section button:hover { 
+#menssage:hover { 
     background-color: darkgoldenrod; 
 }
