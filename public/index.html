@@ -639,14 +639,15 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1000;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color:rgb(72, 72, 72);
+            box-shadow: 0 4px 8px rgba(92, 91, 91, 0.2);
             border-radius: 10px;
-            padding: 20px;
+            padding: 3%;
             width: 300px;
         }
 
         #vote-popup-container h2 {
+            color: whitesmoke;
             margin-bottom: 10px;
             text-align: center;
         }
@@ -666,6 +667,22 @@
         #vote-options button:hover {
             background-color: #0056b3;
         }
+
+        #fechar {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            width: 80%;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #fechar:hover {
+            background-color: darkred;
+        }
     </style>
 </head>
 
@@ -682,7 +699,7 @@
     <header>
         <nav class="navbar">
             <div class="logo">
-                <img src="../img/logo ranview.png alt=" Logo">
+                <img src="../img/logo ranview.png">
                 <span>RawView</span>
             </div>
             <input type="text" placeholder="Pesquisa" class="search-bar">
@@ -748,7 +765,7 @@
                     <div id="vote-options">
                         <!-- As opções serão adicionadas dinamicamente -->
                     </div>
-                    <button onclick="closeVotePopup()">Fechar</button>
+                    <button id="fechar" onclick="closeVotePopup()">Fechar</button>
                 </div>
             </div>
         </div>
