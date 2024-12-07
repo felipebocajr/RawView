@@ -627,6 +627,46 @@
         #vote-options button:hover {
             background-color: #0056b3;
         }
+
+       #create-vote-popup-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+        }
+
+        #create-vote-popup-container h2 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #create-vote-popup-container input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        #create-vote-popup-container button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #create-vote-popup-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
     </style>
 </head>
 
@@ -678,16 +718,29 @@
             <!-- Seção de chat -->
             <div class="chat-section">
                 <h2>Chat ao Vivo</h2>
+                <!-- Botões de chat -->
                 <div class="botoes-container">
-                    <button class="botao-chat" onclick="showVotePopup()">Votação</button>
-                    <button class="botao-chat">Proximo</button>
-                    <button class="botao-chat">Historico</button>
+                    <button class="botao-chat" onclick="showVotePopup()">Responder Votação</button>
+                    <button class="botao-chat" onclick="showCreateVotePopup()">Criar Votação</button>
+                    <button class="botao-chat">Próximo</button>
+                    <button class="botao-chat">Histórico</button>
                 </div>
-                <div class="chat-box" id="chat-box"></div>
-                <div class="chat-input">
-                    <input type="text" id="chat-message" placeholder="Digite sua mensagem...">
-                    <button id="menssage" onclick="sendMessage()">Enviar</button>
+
+                <!-- Pop-up para criar votação -->
+                <div id="create-vote-popup-container" class="popup-hidden">
+                    <div class="popup-content">
+                        <h2>Criar Votação</h2>
+                        <p>Título da Votação:</p>
+                        <input type="text" id="vote-title-input" placeholder="Digite o título da votação">
+                        <p>Opções (separe por vírgulas):</p>
+                        <input type="text" id="vote-options-input" placeholder="Opção 1, Opção 2, Opção 3">
+                        <p>Tempo limite (em segundos):</p>
+                        <input type="number" id="vote-timer-input" placeholder="30">
+                        <button onclick="createVote()">Criar</button>
+                        <button onclick="closeCreateVotePopup()">Fechar</button>
+                    </div>
                 </div>
+
 
             </div>
             <!-- Pop-up de votação -->
@@ -712,6 +765,85 @@
 
 
             const voteDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/votes.json";
+            // Mostrar pop-up para criar votação
+            function showCreateVotePopup() {
+                const popup = document.getElementById("create-vote-popup-container");
+                popup.style.display = 'block';
+                popup.classList.remove('popup-hidden');
+            }
+
+            // Fechar pop-up de criar votação
+            function closeCreateVotePopup() {
+                const popup = document.getElementById("create-vote-popup-container");
+                popup.style.display = 'none';
+                popup.classList.add('popup-hidden');
+            }
+
+            // Criar votação
+            function createVote() {
+                const title = document.getElementById('vote-title-input').value;
+                const options = document.getElementById('vote-options-input').value.split(',').map(opt => opt.trim());
+                const timer = parseInt(document.getElementById('vote-timer-input').value, 10);
+
+                if (!title || options.length < 2 || isNaN(timer) || timer <= 0) {
+                    alert("Preencha todos os campos corretamente.");
+                    return;
+                }
+
+                const voteData = {
+                    title,
+                    options,
+                    timer,
+                    votes: {}, // Armazenará os votos de cada opção
+                    createdAt: Date.now()
+                };
+
+                // Enviar para o Firebase
+                fetch(voteDatabaseUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(voteData)
+                }).then(response => {
+                    if (!response.ok) throw new Error("Erro ao criar a votação");
+                    alert("Votação criada com sucesso!");
+                    closeCreateVotePopup();
+                }).catch(error => console.error("Erro:", error));
+            }
+
+            // Atualizar resultados e timer em tempo real
+            function loadVoteResultsAndTimer() {
+                fetch(voteDatabaseUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        const activeVote = Object.values(data).find(vote => (Date.now() - vote.createdAt) / 1000 < vote.timer);
+
+                        if (activeVote) {
+                            const remainingTime = activeVote.timer - Math.floor((Date.now() - activeVote.createdAt) / 1000);
+                            document.getElementById('vote-popup-container').querySelector('h2').textContent = `${activeVote.title} (${remainingTime}s restantes)`;
+
+                            const results = {};
+                            for (const option of activeVote.options) {
+                                results[option] = activeVote.votes[option] || 0;
+                            }
+
+                            const voteOptionsContainer = document.getElementById('vote-options');
+                            voteOptionsContainer.innerHTML = '';
+                            for (const option in results) {
+                                const button = document.createElement("button");
+                                button.textContent = `${option} (${results[option]} votos)`;
+                                button.onclick = () => submitVote(option);
+                                voteOptionsContainer.appendChild(button);
+                            }
+                        }
+                    })
+                    .catch(error => console.error("Erro ao carregar resultados e timer:", error));
+            }
+
+            // Atualizar resultados e timer a cada 5 segundos
+            setInterval(loadVoteResultsAndTimer, 5000);
+
 
             // Exibir pop-up de votação
             function showVotePopup() {
