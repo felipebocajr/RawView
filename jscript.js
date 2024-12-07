@@ -160,6 +160,82 @@ function loadStoredVideo() {
         });
 }
 
+// Variável global para armazenar o nickname
+let userNickname = '';
+
+// Modificar a função closePopup para capturar o nickname
+function closePopup() {
+    // Seleciona o elemento do pop-up
+    var popup = document.getElementById("popup-container");
+    
+    // Captura o nickname do input
+    userNickname = document.querySelector('#popup-container input[type="text"]').value.trim();
+    
+    // Verifica se o nickname foi preenchido
+    if (!userNickname) {
+        alert("Por favor, insira um nickname antes de continuar.");
+        return;
+    }
+
+    // Esconde o pop-up
+    popup.style.display = 'none';
+    popup.classList.remove('popup-visible');
+}
+
+// Modifica a função de enviar mensagem para incluir o nickname
+function sendMessage() {
+    const message = document.getElementById('chat-message').value;
+    if (message) {
+        const messageData = {
+            nickname: userNickname, // Adiciona o nickname à mensagem
+            message: message,
+            timestamp: new Date().toLocaleTimeString()
+        };
+
+        // Enviar a mensagem para o Firebase usando a API REST
+        fetch(chatDatabaseUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(messageData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao enviar a mensagem');
+            }
+            console.log('Mensagem enviada com sucesso!');
+            document.getElementById('chat-message').value = '';
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+        });
+    } else {
+        alert("Digite uma mensagem antes de enviar.");
+    }
+}
+
+// Modifica a função de carregar mensagens para mostrar o nickname
+function loadMessages() {
+    fetch(chatDatabaseUrl)
+        .then(response => response.json())
+        .then(data => {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = ''; // Limpa o chat existente
+            for (const key in data) {
+                const msgData = data[key];
+                const msgElement = document.createElement("div");
+                msgElement.classList.add("message");
+                // Formato da mensagem agora inclui o nickname
+                msgElement.textContent = `[${msgData.timestamp}] ${msgData.nickname}: ${msgData.message}`;
+                chatBox.appendChild(msgElement);
+            }
+            chatBox.scrollTop = chatBox.scrollHeight; // Rolagem para a última mensagem
+        })
+        .catch(error => {
+            console.error('Erro ao carregar mensagens:', error);
+        });
+}
 // Carregar mensagens a cada 2 segundos
 setInterval(loadMessages, 2000);
 window.onload = loadStoredVideo;

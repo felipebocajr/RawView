@@ -407,3 +407,44 @@ h1 {
 #menssage:hover { 
     background-color: darkgoldenrod; 
 }
+
+#popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none; /* Começa escondido */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#popup-container.popup-visible {
+    display: flex; /* Mostra quando tem a classe popup-visible */
+}
+
+#popup-container .popup-content {
+    background-color: rgb(64, 64, 64);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+#popup-container .popup-content input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 8px;
+}
+
+#popup-container .popup-content button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
