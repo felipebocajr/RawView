@@ -9,9 +9,8 @@
     <!-- <script src="jscript.js"></script> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-
-         /* Estilo para o popup de compartilhamento */
-         .share-popup {
+        /* Estilo para o popup de compartilhamento */
+        .share-popup {
             position: fixed;
             top: 0;
             left: 0;
@@ -364,7 +363,6 @@
         }
 
         #play-button {
-
             background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
             color: #ffffff;
             border: 0.0625rem solid #333333;
@@ -423,11 +421,6 @@
             100% {
                 left: 100%;
             }
-        }
-
-        /* Efeito de pulsar quando o vídeo estiver pausado */
-        #play-button.paused {
-            animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
@@ -728,11 +721,7 @@
             <!-- Seção de chat -->
             <div class="chat-section">
                 <h2>Chat ao Vivo</h2>
-                <div class="botoes-container">
-                    <button class="botao-chat" onclick="showVotePopup()">Votação</button>
-                    <button class="botao-chat">Proximo</button>
-                    <button class="botao-chat">Historico</button>
-                </div>
+                
                 <div class="chat-box" id="chat-box"></div>
                 <div class="chat-input">
                     <input type="text" id="chat-message" placeholder="Digite sua mensagem...">
