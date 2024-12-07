@@ -96,7 +96,6 @@ function sendMessage() {
     if (message) {
         const messageData = {
             message: message,
-            timestamp: new Date().toLocaleTimeString()
         };
 
         // Enviar a mensagem para o Firebase usando a API REST
@@ -133,7 +132,7 @@ function loadMessages() {
                 const msgData = data[key];
                 const msgElement = document.createElement("div");
                 msgElement.classList.add("message");
-                msgElement.textContent = `[${msgData.timestamp}] ${msgData.message}`;
+                msgElement.textContent = `${msgData.message}`;
                 chatBox.appendChild(msgElement);
             }
             chatBox.scrollTop = chatBox.scrollHeight; // Rolagem para a última mensagem
@@ -188,8 +187,7 @@ function sendMessage() {
     if (message) {
         const messageData = {
             nickname: userNickname, // Adiciona o nickname à mensagem
-            message: message,
-            timestamp: new Date().toLocaleTimeString()
+            message: message
         };
 
         // Enviar a mensagem para o Firebase usando a API REST
@@ -227,7 +225,7 @@ function loadMessages() {
                 const msgElement = document.createElement("div");
                 msgElement.classList.add("message");
                 // Formato da mensagem agora inclui o nickname
-                msgElement.textContent = `[${msgData.timestamp}] ${msgData.nickname}: ${msgData.message}`;
+                msgElement.textContent = `${msgData.nickname}: ${msgData.message}`;
                 chatBox.appendChild(msgElement);
             }
             chatBox.scrollTop = chatBox.scrollHeight; // Rolagem para a última mensagem
