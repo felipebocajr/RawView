@@ -627,30 +627,6 @@
         #vote-options button:hover {
             background-color: #0056b3;
         }
-
-        .popup-content {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
-            margin: 100px auto;
-            text-align: center;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .timer-display {
-            margin: 20px 0;
-            font-size: 20px;
-            text-align: center;
-            color: #4e4e8a;
-        }
-
-        .results-display {
-            margin-top: 20px;
-            font-size: 18px;
-            text-align: center;
-            color: #4e4e8a;
-        }
     </style>
 </head>
 
@@ -703,8 +679,7 @@
             <div class="chat-section">
                 <h2>Chat ao Vivo</h2>
                 <div class="botoes-container">
-                    <button class="botao-chat" onclick="openCreateVotePopup()">Criar Votação</button>
-                    <button class="botao-chat" onclick="openRespondVotePopup()">Responder Votação</button>
+                    <button class="botao-chat" onclick="showVotePopup()">Votação</button>
                     <button class="botao-chat">Proximo</button>
                     <button class="botao-chat">Historico</button>
                 </div>
@@ -715,32 +690,17 @@
                 </div>
 
             </div>
-            <!-- Pop-Up de Criar Votação -->
-            <div id="create-vote-popup-container" class="popup-hidden">
+            <!-- Pop-up de votação -->
+            <div id="vote-popup-container" class="popup-hidden">
                 <div class="popup-content">
-                    <h2>Criar Votação</h2>
-                    <textarea id="vote-options-input" placeholder="Insira as opções separadas por linhas"></textarea>
-                    <input id="vote-timer" type="number" placeholder="Duração da votação (em segundos)">
-                    <button onclick="createVote()">Criar</button>
-                    <button onclick="closeCreateVotePopup()">Fechar</button>
+                    <h2>Votação</h2>
+                    <p>Escolha uma opção:</p>
+                    <div id="vote-options">
+                        <!-- As opções serão adicionadas dinamicamente -->
+                    </div>
+                    <button onclick="closeVotePopup()">Fechar</button>
                 </div>
             </div>
-
-            <!-- Pop-Up de Responder Votação -->
-            <div id="respond-vote-popup-container" class="popup-hidden">
-                <div class="popup-content">
-                    <h2>Responder Votação</h2>
-                    <div id="respond-vote-options"></div>
-                    <button onclick="closeRespondVotePopup()">Fechar</button>
-                </div>
-            </div>
-
-            <!-- Temporizador -->
-            <div id="vote-timer-display" class="timer-display"></div>
-
-            <!-- Resultados -->
-            <div id="vote-results-display" class="results-display"></div>
-
         </div>
         <script>
             const videoDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/video.json";
@@ -751,138 +711,77 @@
             let videoIframe = null;
 
 
-            const activeVoteUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/activeVote.json";
-            let voteInterval = null;
+            const voteDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/votes.json";
 
-            function openCreateVotePopup() {
-                document.getElementById("create-vote-popup-container").style.display = "block";
+            // Exibir pop-up de votação
+            function showVotePopup() {
+                const popup = document.getElementById("vote-popup-container");
+                popup.style.display = 'block';
+                popup.classList.remove('popup-hidden');
+                loadVoteOptions();
             }
 
-            function closeCreateVotePopup() {
-                document.getElementById("create-vote-popup-container").style.display = "none";
+            // Fechar pop-up de votação
+            function closeVotePopup() {
+                const popup = document.getElementById("vote-popup-container");
+                popup.style.display = 'none';
+                popup.classList.add('popup-hidden');
             }
 
-            function openRespondVotePopup() {
-                fetch(activeVoteUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data || !data.options) {
-                            alert("Nenhuma votação ativa no momento.");
-                            return;
-                        }
+            // Carregar opções de votação
+            function loadVoteOptions() {
+                const options = ["Opção 1", "Opção 2", "Opção 3"]; // Personalize conforme necessário
+                const voteOptionsContainer = document.getElementById("vote-options");
+                voteOptionsContainer.innerHTML = '';
 
-                        const optionsContainer = document.getElementById("respond-vote-options");
-                        optionsContainer.innerHTML = "";
-                        data.options.forEach((option, index) => {
-                            const button = document.createElement("button");
-                            button.textContent = option;
-                            button.onclick = () => vote(index);
-                            optionsContainer.appendChild(button);
-                        });
-
-                        document.getElementById("respond-vote-popup-container").style.display = "block";
-                    })
-                    .catch(error => console.error("Erro ao carregar a votação:", error));
+                options.forEach(option => {
+                    const button = document.createElement("button");
+                    button.textContent = option;
+                    button.onclick = () => submitVote(option);
+                    voteOptionsContainer.appendChild(button);
+                });
             }
 
-            function closeRespondVotePopup() {
-                document.getElementById("respond-vote-popup-container").style.display = "none";
-            }
-
-            function createVote() {
-                const optionsInput = document.getElementById("vote-options-input").value.trim();
-                const timerDuration = parseInt(document.getElementById("vote-timer").value, 10);
-
-                if (!optionsInput || isNaN(timerDuration) || timerDuration < 10) {
-                    alert("Por favor, preencha as opções e um tempo válido (mínimo 10 segundos).");
-                    return;
-                }
-
-                const options = optionsInput.split("\n").map(opt => opt.trim()).filter(opt => opt);
-
-                if (options.length < 2) {
-                    alert("A votação deve ter pelo menos duas opções.");
-                    return;
-                }
-
-                const voteData = {
-                    options: options,
-                    votes: Array(options.length).fill(0),
-                    startTime: Date.now(),
-                    timerDuration: timerDuration * 1000
-                };
-
-                fetch(activeVoteUrl, {
-                    method: "PUT",
+            // Enviar voto para o Firebase
+            function submitVote(option) {
+                fetch(voteDatabaseUrl, {
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(voteData)
+                    body: JSON.stringify({ option, voter: userNickname }) // Inclui o nickname do usuário
                 })
                     .then(response => {
-                        if (!response.ok) throw new Error("Erro ao criar votação");
-                        alert("Votação criada com sucesso!");
-                        closeCreateVotePopup();
-                        startVoteTimer(timerDuration);
+                        if (!response.ok) throw new Error("Erro ao enviar o voto");
+                        alert(`Seu voto em "${option}" foi enviado!`);
+                        closeVotePopup();
                     })
                     .catch(error => {
-                        console.error("Erro ao criar votação:", error);
-                        alert("Houve um erro ao criar a votação. Tente novamente.");
+                        console.error("Erro:", error);
                     });
             }
 
-            function vote(index) {
-                fetch(activeVoteUrl)
+            // Carregar resultados da votação em tempo real
+            function loadVoteResults() {
+                fetch(voteDatabaseUrl)
                     .then(response => response.json())
                     .then(data => {
-                        if (!data || !data.votes) return;
-                        data.votes[index] += 1;
+                        const results = {};
+                        for (const key in data) {
+                            const vote = data[key];
+                            results[vote.option] = (results[vote.option] || 0) + 1;
+                        }
 
-                        fetch(activeVoteUrl, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(data)
-                        })
-                            .then(() => alert("Voto registrado com sucesso!"))
-                            .catch(error => console.error("Erro ao registrar voto:", error));
-                    });
-            }
-
-            function startVoteTimer(duration) {
-                const timerDisplay = document.getElementById("vote-timer-display");
-                timerDisplay.style.display = "block";
-                let timeLeft = duration;
-
-                clearInterval(voteInterval);
-                voteInterval = setInterval(() => {
-                    if (timeLeft <= 0) {
-                        clearInterval(voteInterval);
-                        showVoteResults();
-                        timerDisplay.style.display = "none";
-                    } else {
-                        timerDisplay.textContent = `Tempo restante: ${timeLeft} segundos`;
-                        timeLeft -= 1;
-                    }
-                }, 1000);
-            }
-
-            function showVoteResults() {
-                fetch(activeVoteUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data || !data.votes) return;
-                        const resultsDisplay = document.getElementById("vote-results-display");
-                        resultsDisplay.style.display = "block";
-                        resultsDisplay.innerHTML = "<h2>Resultados da Votação</h2>";
-                        data.options.forEach((option, index) => {
-                            resultsDisplay.innerHTML += `<p>${option}: ${data.votes[index]} votos</p>`;
-                        });
+                        console.log("Resultados da votação:", results);
+                        // Você pode exibir os resultados no pop-up ou em outro lugar
                     })
-                    .catch(error => console.error("Erro ao carregar resultados:", error));
+                    .catch(error => {
+                        console.error("Erro ao carregar resultados da votação:", error);
+                    });
             }
 
+            // Atualizar resultados a cada 5 segundos
+            setInterval(loadVoteResults, 5000);
 
 
             // Carregar vídeo
