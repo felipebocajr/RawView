@@ -10,455 +10,623 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Estilos do layout da sala de cinema */
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-body {
-    font-family: "Helvetica", sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-    background-color: #181818; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
-.container { display: flex; width: 90%; max-width: 1200px; background-color: #282828; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); overflow: hidden; }
-.video-section { flex: 3; padding: 20px; display: flex; flex-direction: column; }
-.chat-section { flex: 1; background-color: #333; padding: 30px; display: flex; flex-direction: column; align-items: center; }
+        body {
+            font-family: "Helvetica", sans-serif;
 
-h1 { 
-    font-family: "Helvetica", sans-serif;
-    color: #ffcc00; margin-bottom: 20px; text-align: center; }
-.video-input { display: flex; margin-bottom: 15px; gap: 10px; }
-.video-input input[type="text"] { flex: 1; padding: 10px; border: none; border-radius: 5px; background-color: #404040; color: #fff; }
-.video-input button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #ffcc00; color: #000; cursor: pointer; transition: background 0.3s; }
-.video-input button:hover { background-color: #000000; }
-.video-player { width: 100%; height: 400px; background-color: #000; border-radius: 5px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.chat-section h2 { font-family: Verdana, Geneva, Tahoma, sans-serif; margin-bottom: 10px; }
-.chat-box { width: 100%; height: 200px; background-color: #222; overflow-y: auto; border-radius: 5px; padding: 10px; color: #bbb; }
-.message { margin-bottom: 5px; font-size: 0.9em; }
-.chat-input { display: flex; gap: 5px; margin-top: 10px; width: 100%; }
-.chat-input input[type="text"] { flex: 1; padding: 10px; border: none; border-radius: 5px; background-color: #404040; color: #fff; }
+            background-color: #181818;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
 
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            background-color: #282828;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
 
-/* Estilo do header e navbar */
-header {
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000; /* Para garantir que fique acima dos outros elementos */
-  box-shadow: 0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.1);
-}
+        .video-section {
+            flex: 3;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
 
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Espaçamento entre logo, pesquisa e perfil */
-  padding: 0.625rem 1.25rem;
-  background-color: #333; /* Ajuste de cor conforme sua preferência */
-  color: white;
-}
+        .chat-section {
+            flex: 1;
+            background-color: #333;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-/* Logo */
-.logo {
-  display: flex;
-  align-items: center;
-}
+        h1 {
+            font-family: "Helvetica", sans-serif;
+            color: #ffcc00;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-.logo img {
-  width: 4.5rem; /* Tamanho do logo */
-  margin-right: 0.5rem;
-}
+        .video-input {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
 
-.logo span {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: white;
-  margin-left:1.5rem;
-}
+        .video-input input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #404040;
+            color: #fff;
+        }
 
-/* Barra de pesquisa */
-/* Barra de pesquisa */
-.search-bar {
-  flex-grow: 1;
-  max-width: 60%; /* Define uma largura máxima */
-  margin: 0 auto; /* Centraliza a barra de pesquisa */
-  padding: 0.5rem;
-  border: 0.0625rem solid #ccc;
-  border-radius: 0.3125rem;
-  font-size: 1rem;
-  background-color: #333; /* Alterar para a cor desejada */
-  color: #ffffff;
-  }
-  .botao-chat {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border: 0.0925rem solid #2a2a2a; /* 1px */
-    border-radius: 0.75rem; /* 12px */
-    padding: 0.5rem 1rem; /* 8px 16px */
-    font-size: 0.875rem; /* 14px */
-    font-weight: 500;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2); /* 2px 8px */
-    text-transform: uppercase;
-    letter-spacing: normal;
-    position: relative;
-    overflow: hidden;
-}
+        .video-input button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffcc00;
+            color: #000;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
 
-/* Classe específica para o botão "A SEGUIR" */
-.botao-chat.no-spacing {
-    letter-spacing: 0;
-    white-space: nowrap;
-    padding: 0.5rem 0.75rem; /* 8px 12px */
-}
+        .video-input button:hover {
+            background-color: #000000;
+        }
 
-.botoes-container {
-    display: flex;
-    gap: 0.5rem; /* 8px */
-    padding: 0.625rem; /* 10px */
-}
+        .video-player {
+            width: 100%;
+            height: 400px;
+            background-color: #000;
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.botao-chat:hover {
-    background-color: #2c2c2c;
-    transform: translateY(-0.125rem); /* -2px */
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3); /* 4px 12px */
-    border-color: #3a3a3a;
-}
+        .chat-section h2 {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            margin-bottom: 10px;
+        }
 
-.botao-chat:active {
-    transform: translateY(0);
-    background-color: #151515;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2); /* 2px 4px */
-}
+        .chat-box {
+            width: 100%;
+            height: 200px;
+            background-color: #222;
+            overflow-y: auto;
+            border-radius: 5px;
+            padding: 10px;
+            color: #bbb;
+        }
 
-.botao-chat::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.05),
-        transparent
-    );
-    transition: 0.5s;
-}
+        .message {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
 
-.botao-chat:hover::before {
-    left: 100%;
-}
+        .chat-input {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            width: 100%;
+        }
 
-/* Variação com borda brilhante */
-.botao-chat.highlight {
-    border: 0.0625rem solid #404040; /* 1px */
-    background: linear-gradient(145deg, #1a1a1a, #222222);
-}
-
-/* Estilo para botão desabilitado */
-.botao-chat:disabled {
-    background-color: #0f0f0f;
-    color: #666666;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
+        .chat-input input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #404040;
+            color: #fff;
+        }
 
 
+        /* Estilo do header e navbar */
+        header {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            /* Para garantir que fique acima dos outros elementos */
+            box-shadow: 0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* Espaçamento entre logo, pesquisa e perfil */
+            padding: 0.625rem 1.25rem;
+            background-color: #333;
+            /* Ajuste de cor conforme sua preferência */
+            color: white;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 4.5rem;
+            /* Tamanho do logo */
+            margin-right: 0.5rem;
+        }
+
+        .logo span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-left: 1.5rem;
+        }
+
+        /* Barra de pesquisa */
+        /* Barra de pesquisa */
+        .search-bar {
+            flex-grow: 1;
+            max-width: 60%;
+            /* Define uma largura máxima */
+            margin: 0 auto;
+            /* Centraliza a barra de pesquisa */
+            padding: 0.5rem;
+            border: 0.0625rem solid #ccc;
+            border-radius: 0.3125rem;
+            font-size: 1rem;
+            background-color: #333;
+            /* Alterar para a cor desejada */
+            color: #ffffff;
+        }
+
+        .botao-chat {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 0.0925rem solid #2a2a2a;
+            /* 1px */
+            border-radius: 0.75rem;
+            /* 12px */
+            padding: 0.5rem 1rem;
+            /* 8px 16px */
+            font-size: 0.875rem;
+            /* 14px */
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+            /* 2px 8px */
+            text-transform: uppercase;
+            letter-spacing: normal;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Classe específica para o botão "A SEGUIR" */
+        .botao-chat.no-spacing {
+            letter-spacing: 0;
+            white-space: nowrap;
+            padding: 0.5rem 0.75rem;
+            /* 8px 12px */
+        }
+
+        .botoes-container {
+            display: flex;
+            gap: 0.5rem;
+            /* 8px */
+            padding: 0.625rem;
+            /* 10px */
+        }
+
+        .botao-chat:hover {
+            background-color: #2c2c2c;
+            transform: translateY(-0.125rem);
+            /* -2px */
+            box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+            /* 4px 12px */
+            border-color: #3a3a3a;
+        }
+
+        .botao-chat:active {
+            transform: translateY(0);
+            background-color: #151515;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+            /* 2px 4px */
+        }
+
+        .botao-chat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.05),
+                    transparent);
+            transition: 0.5s;
+        }
+
+        .botao-chat:hover::before {
+            left: 100%;
+        }
+
+        /* Variação com borda brilhante */
+        .botao-chat.highlight {
+            border: 0.0625rem solid #404040;
+            /* 1px */
+            background: linear-gradient(145deg, #1a1a1a, #222222);
+        }
+
+        /* Estilo para botão desabilitado */
+        .botao-chat:disabled {
+            background-color: #0f0f0f;
+            color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
 
-/* Botão de convite */
-.invite-button {
-  padding: 0.5rem 1rem;
-  background-color: #4267b2;
-  color: white;
-  border: none;
-  border-radius: 0.8rem;
-  font-size: 1rem;
-  cursor: pointer;
-  width: 12rem;
-}
 
-.invite-button:hover {
-  background-color: #365899;
-}
 
-/* Ícone de perfil */
-.profile-icon {
-  margin-left: 0.5rem; /* Reduzido para aproximar o ícone do botão */
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: #666;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        /* Botão de convite */
+        .invite-button {
+            padding: 0.5rem 1rem;
+            background-color: #4267b2;
+            color: white;
+            border: none;
+            border-radius: 0.8rem;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 12rem;
+        }
 
-.profile-icon i {
-  color: white;
-  font-size: 1.25rem;
-  }
-  #play-button {
-    
-    background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
-    color: #ffffff;
-    border: 0.0625rem solid #333333;
-    border-radius: 2rem;
-    padding: 0.75rem 0rem;
-    width: 15%;
-    margin-left: 43%;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.125rem;
-    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
+        .invite-button:hover {
+            background-color: #365899;
+        }
+
+        /* Ícone de perfil */
+        .profile-icon {
+            margin-left: 0.5rem;
+            /* Reduzido para aproximar o ícone do botão */
+            width: 2.5rem;
+            height: 2.5rem;
+            background-color: #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-icon i {
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        #play-button {
+
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            color: #ffffff;
+            border: 0.0625rem solid #333333;
+            border-radius: 2rem;
+            padding: 0.75rem 0rem;
+            width: 15%;
+            margin-left: 43%;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.125rem;
+            box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
                 inset 0 0.125rem 0.25rem rgba(255, 255, 255, 0.1);
-}
+        }
 
-#play-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
-    animation: shine 2s infinite;
-}
+        #play-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.1),
+                    transparent);
+            animation: shine 2s infinite;
+        }
 
-#play-button:hover {
-    transform: translateY(-0.125rem);
-    background: linear-gradient(145deg, #2a2a2a, #333333);
-    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4),
+        #play-button:hover {
+            transform: translateY(-0.125rem);
+            background: linear-gradient(145deg, #2a2a2a, #333333);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4),
                 inset 0 0.125rem 0.25rem rgba(255, 255, 255, 0.15);
-}
+        }
 
-#play-button:active {
-    transform: translateY(0.0625rem);
-    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
-    background: linear-gradient(145deg, #222222, #2a2a2a);
-}
+        #play-button:active {
+            transform: translateY(0.0625rem);
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+            background: linear-gradient(145deg, #222222, #2a2a2a);
+        }
 
-@keyframes shine {
-    0% {
-        left: -100%;
-    }
-    20% {
-        left: 100%;
-    }
-    100% {
-        left: 100%;
-    }
-}
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
 
-/* Efeito de pulsar quando o vídeo estiver pausado */
-#play-button.paused {
-    animation: pulse 2s infinite;
-}
+            20% {
+                left: 100%;
+            }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Efeito de pulsar quando o vídeo estiver pausado */
+        #play-button.paused {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
                     0 0 0 0 rgba(255, 255, 255, 0.1);
-    }
-    70% {
-        box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
+            }
+
+            70% {
+                box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
                     0 0 0 1rem rgba(255, 255, 255, 0);
-    }
-    100% {
-        box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
+            }
+
+            100% {
+                box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3),
                     0 0 0 0 rgba(255, 255, 255, 0);
-    }
-}
+            }
+        }
 
 
-* {
-    margin: 0; 
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-body { 
-    background-color: #181818; 
-    color: #ffffff; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh; 
-    flex-direction: column; 
-}
+        body {
+            background-color: #181818;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
 
-.container { 
-    display: flex; 
-    width: 90%; 
-    max-width: 1200px; 
-    background-color: #282828; 
-    border-radius: 10px; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
-    overflow: hidden; 
-    margin-top: 8rem;
-}
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            background-color: #282828;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-top: 8rem;
+        }
 
-.video-section { 
-    flex: 3; 
-    padding: 20px; 
-    display: flex; 
-    flex-direction: column; 
-}
+        .video-section {
+            flex: 3;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
 
-.chat-section { 
-    flex: 1; 
-    background-color: #333; 
-    padding: 20px; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-}
+        .chat-section {
+            flex: 1;
+            background-color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-h1 { 
-    color: #ffcc00; 
-    margin-bottom: 20px; 
-    text-align: center; 
-}
-.video-input { 
-    display: flex; 
-    margin-bottom: 15px; 
-    gap: 10px; 
-}
+        h1 {
+            color: #ffcc00;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-.video-input input[type="text"] { 
-    flex: 1; 
-    padding: 10px; 
-    border: none; 
-    border-radius: 5px; 
-    background-color: #404040; 
-    color: #fff; 
-}
+        .video-input {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
 
-.video-input button { 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 5px; 
-    background-color: #ffcc00; 
-    color: #000; 
-    cursor: pointer; 
-    transition: background 0.3s; 
-}
+        .video-input input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #404040;
+            color: #fff;
+        }
 
-.video-input button:hover { 
-    background-color: darkgoldenrod; 
-}
+        .video-input button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffcc00;
+            color: #000;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
 
-.video-player { 
-    width: 100%; 
-    height: 400px; 
-    background-color: #000; 
-    border-radius: 5px; 
-    overflow: hidden; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-}
+        .video-input button:hover {
+            background-color: darkgoldenrod;
+        }
 
-.chat-section h2 { 
-    margin-bottom: 9px; 
-}
+        .video-player {
+            width: 100%;
+            height: 400px;
+            background-color: #000;
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.chat-box { 
-    width: 100%; 
-    height: 400px; 
-    background-color: #222; 
-    overflow-y: auto; 
-    border-radius: 5px; 
-    padding: 10px; 
-    color: #bbb; 
-}
+        .chat-section h2 {
+            margin-bottom: 9px;
+        }
+
+        .chat-box {
+            width: 100%;
+            height: 400px;
+            background-color: #222;
+            overflow-y: auto;
+            border-radius: 5px;
+            padding: 10px;
+            color: #bbb;
+        }
 
 
-.chat-input { 
-    display: flex; 
-    gap: 5px; 
-    margin-top: 10px; 
-    width: 100%; 
-}
+        .chat-input {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            width: 100%;
+        }
 
-.chat-input input[type="text"] { 
-    flex: 1; 
-    padding: 10px; 
-    border: none; 
-    border-radius: 5px; 
-    background-color: #404040; 
-    color: #fff; 
-}
+        .chat-input input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #404040;
+            color: #fff;
+        }
 
-#menssage {
-    background-color: #ffcc00;
-    padding: 10px 20px;
-    width: 80px;
-    border: none; 
-    border-radius: 10px; 
-    background-color: #ffcc00;
-    text-align: center;
-    color: #000; 
-    cursor: pointer; 
-    transition: background 0.3s;
-}
+        #menssage {
+            background-color: #ffcc00;
+            padding: 10px 20px;
+            width: 80px;
+            border: none;
+            border-radius: 10px;
+            background-color: #ffcc00;
+            text-align: center;
+            color: #000;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
 
-#menssage:hover { 
-    background-color: darkgoldenrod; 
-}
+        #menssage:hover {
+            background-color: darkgoldenrod;
+        }
 
-#popup-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: none; /* Começa escondido */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+        #popup-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            /* Começa escondido */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
 
-#popup-container.popup-visible {
-    display: flex; /* Mostra quando tem a classe popup-visible */
-}
+        #popup-container.popup-visible {
+            display: flex;
+            /* Mostra quando tem a classe popup-visible */
+        }
 
-#popup-container .popup-content {
-    background-color: rgb(64, 64, 64);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-}
+        #popup-container .popup-content {
+            background-color: rgb(64, 64, 64);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
 
-#popup-container .popup-content input {
-    width: 100%;
-    margin: 10px 0;
-    padding: 8px;
-}
+        #popup-container .popup-content input {
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+        }
 
-#popup-container .popup-content button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        #popup-container .popup-content button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup-hidden {
+            display: none;
+        }
+
+        #vote-popup-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+        }
+
+        #vote-popup-container h2 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #vote-options button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            width: 80%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #vote-options button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
@@ -475,7 +643,7 @@ h1 {
     <header>
         <nav class="navbar">
             <div class="logo">
-                <img src="../img/logo ranview.png alt="Logo">
+                <img src="../img/logo ranview.png alt=" Logo">
                 <span>RawView</span>
             </div>
             <input type="text" placeholder="Pesquisa" class="search-bar">
@@ -511,7 +679,7 @@ h1 {
             <div class="chat-section">
                 <h2>Chat ao Vivo</h2>
                 <div class="botoes-container">
-                    <button class="botao-chat">Votação</button>
+                    <button class="botao-chat" onclick="showVotePopup()">Votação</button>
                     <button class="botao-chat">Proximo</button>
                     <button class="botao-chat">Historico</button>
                 </div>
@@ -522,6 +690,17 @@ h1 {
                 </div>
 
             </div>
+            <!-- Pop-up de votação -->
+            <div id="vote-popup-container" class="popup-hidden">
+                <div class="popup-content">
+                    <h2>Votação</h2>
+                    <p>Escolha uma opção:</p>
+                    <div id="vote-options">
+                        <!-- As opções serão adicionadas dinamicamente -->
+                    </div>
+                    <button onclick="closeVotePopup()">Fechar</button>
+                </div>
+            </div>
         </div>
         <script>
             const videoDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/video.json";
@@ -530,6 +709,80 @@ h1 {
             let currentVideoId = null;
             let isPlaying = false;
             let videoIframe = null;
+
+
+            const voteDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/votes.json";
+
+            // Exibir pop-up de votação
+            function showVotePopup() {
+                const popup = document.getElementById("vote-popup-container");
+                popup.style.display = 'block';
+                popup.classList.remove('popup-hidden');
+                loadVoteOptions();
+            }
+
+            // Fechar pop-up de votação
+            function closeVotePopup() {
+                const popup = document.getElementById("vote-popup-container");
+                popup.style.display = 'none';
+                popup.classList.add('popup-hidden');
+            }
+
+            // Carregar opções de votação
+            function loadVoteOptions() {
+                const options = ["Opção 1", "Opção 2", "Opção 3"]; // Personalize conforme necessário
+                const voteOptionsContainer = document.getElementById("vote-options");
+                voteOptionsContainer.innerHTML = '';
+
+                options.forEach(option => {
+                    const button = document.createElement("button");
+                    button.textContent = option;
+                    button.onclick = () => submitVote(option);
+                    voteOptionsContainer.appendChild(button);
+                });
+            }
+
+            // Enviar voto para o Firebase
+            function submitVote(option) {
+                fetch(voteDatabaseUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ option, voter: userNickname }) // Inclui o nickname do usuário
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Erro ao enviar o voto");
+                        alert(`Seu voto em "${option}" foi enviado!`);
+                        closeVotePopup();
+                    })
+                    .catch(error => {
+                        console.error("Erro:", error);
+                    });
+            }
+
+            // Carregar resultados da votação em tempo real
+            function loadVoteResults() {
+                fetch(voteDatabaseUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        const results = {};
+                        for (const key in data) {
+                            const vote = data[key];
+                            results[vote.option] = (results[vote.option] || 0) + 1;
+                        }
+
+                        console.log("Resultados da votação:", results);
+                        // Você pode exibir os resultados no pop-up ou em outro lugar
+                    })
+                    .catch(error => {
+                        console.error("Erro ao carregar resultados da votação:", error);
+                    });
+            }
+
+            // Atualizar resultados a cada 5 segundos
+            setInterval(loadVoteResults, 5000);
+
 
             // Carregar vídeo
             function loadVideo() {
