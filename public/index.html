@@ -628,85 +628,28 @@
             background-color: #0056b3;
         }
 
-        /* Timer melhorado */
-        #vote-timer-display {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #007BFF;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            font-size: 18px;
-            font-weight: bold;
-            z-index: 1000;
-            animation: fade-in 0.5s ease-in-out;
-        }
-
-        .timer-hidden {
-            display: none;
-        }
-
-        /* Pop-ups centralizados e estilizados */
         .popup-content {
-            background-color: white;
+            background-color: #333;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 400px;
-            margin: auto;
+            width: 300px;
+            margin: 100px auto;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .popup-content h2 {
-            margin-top: 0;
-            font-size: 1.5rem;
-            color: #333;
+        .timer-display {
+            margin: 20px 0;
+            font-size: 20px;
+            text-align: center;
+            color: #4e4e8a;
         }
 
-        .popup-content button {
-            background: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px 0;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .popup-content button:hover {
-            background: #0056b3;
-        }
-
-        .popup-content textarea,
-        .popup-content input[type="number"] {
-            width: calc(100% - 20px);
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .popup-content div button {
-            margin: 5px 0;
-            width: 100%;
-        }
-
-        /* Fade-in animation */
-        @keyframes fade-in {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .results-display {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+            color: #4e4e8a;
         }
     </style>
 </head>
@@ -772,33 +715,31 @@
                 </div>
 
             </div>
-            <!-- Pop-up de votação -->
-            <!-- Pop-up para criar votação -->
+            <!-- Pop-Up de Criar Votação -->
             <div id="create-vote-popup-container" class="popup-hidden">
                 <div class="popup-content">
                     <h2>Criar Votação</h2>
-                    <p>Digite as opções de votação (uma por linha):</p>
-                    <textarea id="vote-options-input" placeholder="Opção 1\nOpção 2\nOpção 3"></textarea>
-                    <input type="number" id="vote-timer" placeholder="Tempo em segundos" min="10">
-                    <button onclick="createVote()">Criar Votação</button>
+                    <textarea id="vote-options-input" placeholder="Insira as opções separadas por linhas"></textarea>
+                    <input id="vote-timer" type="number" placeholder="Duração da votação (em segundos)">
+                    <button onclick="createVote()">Criar</button>
                     <button onclick="closeCreateVotePopup()">Fechar</button>
                 </div>
             </div>
 
-            <!-- Pop-up para responder votação -->
+            <!-- Pop-Up de Responder Votação -->
             <div id="respond-vote-popup-container" class="popup-hidden">
                 <div class="popup-content">
                     <h2>Responder Votação</h2>
-                    <p>Escolha uma opção:</p>
                     <div id="respond-vote-options"></div>
                     <button onclick="closeRespondVotePopup()">Fechar</button>
                 </div>
             </div>
 
-            <!-- Timer de votação -->
-            <div id="vote-timer-display" class="timer-hidden">
-                <p id="timer-text">Tempo restante: <span id="timer-countdown"></span></p>
-            </div>
+            <!-- Temporizador -->
+            <div id="vote-timer-display" class="timer-display"></div>
+
+            <!-- Resultados -->
+            <div id="vote-results-display" class="results-display"></div>
 
         </div>
         <script>
@@ -810,72 +751,44 @@
             let videoIframe = null;
 
 
-            const voteDatabaseUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/votes.json";
             const activeVoteUrl = "https://cinema-online-1ee04-default-rtdb.firebaseio.com/activeVote.json";
+            let voteInterval = null;
 
-            // Exibir resultados da votação
-            function showVoteResults() {
-                fetch(voteDatabaseUrl)
+            function openCreateVotePopup() {
+                document.getElementById("create-vote-popup-container").style.display = "block";
+            }
+
+            function closeCreateVotePopup() {
+                document.getElementById("create-vote-popup-container").style.display = "none";
+            }
+
+            function openRespondVotePopup() {
+                fetch(activeVoteUrl)
                     .then(response => response.json())
                     .then(data => {
-                        const results = {};
-                        for (const key in data) {
-                            const vote = data[key];
-                            results[vote.option] = (results[vote.option] || 0) + 1;
+                        if (!data || !data.options) {
+                            alert("Nenhuma votação ativa no momento.");
+                            return;
                         }
 
-                        let resultText = "Resultados da Votação:\n";
-                        for (const option in results) {
-                            resultText += `${option}: ${results[option]} votos\n`;
-                        }
+                        const optionsContainer = document.getElementById("respond-vote-options");
+                        optionsContainer.innerHTML = "";
+                        data.options.forEach((option, index) => {
+                            const button = document.createElement("button");
+                            button.textContent = option;
+                            button.onclick = () => vote(index);
+                            optionsContainer.appendChild(button);
+                        });
 
-                        alert(resultText); // Substituir por exibição em um modal para melhor design
+                        document.getElementById("respond-vote-popup-container").style.display = "block";
                     })
-                    .catch(error => console.error("Erro ao carregar resultados:", error));
+                    .catch(error => console.error("Erro ao carregar a votação:", error));
             }
 
-            // Corrigir envio de voto com feedback visual
-            function submitVote(option) {
-                fetch(voteDatabaseUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ option, voter: userNickname })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error("Erro ao enviar o voto");
-                        alert(`Seu voto em "${option}" foi enviado!`);
-                        closeRespondVotePopup();
-                    })
-                    .catch(error => {
-                        console.error("Erro ao enviar voto:", error);
-                        alert("Erro ao enviar o voto. Tente novamente.");
-                    });
+            function closeRespondVotePopup() {
+                document.getElementById("respond-vote-popup-container").style.display = "none";
             }
 
-            // Iniciar timer e finalizar com resultados
-            function startVoteTimer(duration) {
-                const timerDisplay = document.getElementById("vote-timer-display");
-                const timerText = document.getElementById("timer-countdown");
-                let timeRemaining = duration;
-
-                timerDisplay.style.display = 'block';
-                timerDisplay.classList.remove('timer-hidden');
-
-                const timerInterval = setInterval(() => {
-                    timeRemaining -= 1;
-                    timerText.textContent = `${timeRemaining}s`;
-
-                    if (timeRemaining <= 0) {
-                        clearInterval(timerInterval);
-                        timerDisplay.style.display = 'none';
-                        showVoteResults();
-                    }
-                }, 1000);
-            }
-
-            // Criar votação com timer integrado
             function createVote() {
                 const optionsInput = document.getElementById("vote-options-input").value.trim();
                 const timerDuration = parseInt(document.getElementById("vote-timer").value, 10);
@@ -887,8 +800,14 @@
 
                 const options = optionsInput.split("\n").map(opt => opt.trim()).filter(opt => opt);
 
+                if (options.length < 2) {
+                    alert("A votação deve ter pelo menos duas opções.");
+                    return;
+                }
+
                 const voteData = {
                     options: options,
+                    votes: Array(options.length).fill(0),
                     startTime: Date.now(),
                     timerDuration: timerDuration * 1000
                 };
@@ -906,42 +825,63 @@
                         closeCreateVotePopup();
                         startVoteTimer(timerDuration);
                     })
-                    .catch(error => console.error("Erro ao criar votação:", error));
+                    .catch(error => {
+                        console.error("Erro ao criar votação:", error);
+                        alert("Houve um erro ao criar a votação. Tente novamente.");
+                    });
             }
 
-            // Exibir opções de votação com feedback visual
-            function showRespondVotePopup() {
+            function vote(index) {
                 fetch(activeVoteUrl)
                     .then(response => response.json())
                     .then(data => {
-                        if (!data || !data.options) {
-                            alert("Não há votação ativa no momento.");
-                            return;
-                        }
+                        if (!data || !data.votes) return;
+                        data.votes[index] += 1;
 
-                        const optionsContainer = document.getElementById("respond-vote-options");
-                        optionsContainer.innerHTML = '';
-
-                        data.options.forEach(option => {
-                            const button = document.createElement("button");
-                            button.textContent = option;
-                            button.onclick = () => submitVote(option);
-                            button.style.background = "#007BFF";
-                            button.style.color = "#fff";
-                            button.style.padding = "10px";
-                            button.style.margin = "5px 0";
-                            button.style.borderRadius = "5px";
-                            button.style.cursor = "pointer";
-                            optionsContainer.appendChild(button);
-                        });
-
-                        const popup = document.getElementById("respond-vote-popup-container");
-                        popup.style.display = 'block';
-                        popup.classList.remove('popup-hidden');
-                    })
-                    .catch(error => console.error("Erro ao carregar votação:", error));
+                        fetch(activeVoteUrl, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(data)
+                        })
+                            .then(() => alert("Voto registrado com sucesso!"))
+                            .catch(error => console.error("Erro ao registrar voto:", error));
+                    });
             }
 
+            function startVoteTimer(duration) {
+                const timerDisplay = document.getElementById("vote-timer-display");
+                timerDisplay.style.display = "block";
+                let timeLeft = duration;
+
+                clearInterval(voteInterval);
+                voteInterval = setInterval(() => {
+                    if (timeLeft <= 0) {
+                        clearInterval(voteInterval);
+                        showVoteResults();
+                        timerDisplay.style.display = "none";
+                    } else {
+                        timerDisplay.textContent = `Tempo restante: ${timeLeft} segundos`;
+                        timeLeft -= 1;
+                    }
+                }, 1000);
+            }
+
+            function showVoteResults() {
+                fetch(activeVoteUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data || !data.votes) return;
+                        const resultsDisplay = document.getElementById("vote-results-display");
+                        resultsDisplay.style.display = "block";
+                        resultsDisplay.innerHTML = "<h2>Resultados da Votação</h2>";
+                        data.options.forEach((option, index) => {
+                            resultsDisplay.innerHTML += `<p>${option}: ${data.votes[index]} votos</p>`;
+                        });
+                    })
+                    .catch(error => console.error("Erro ao carregar resultados:", error));
+            }
 
 
 
